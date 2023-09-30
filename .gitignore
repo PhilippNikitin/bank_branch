@@ -1,0 +1,4 @@
+venv/
+bank_branch/.idea/
+bank_branch/db.sqlite3
+*.pyc
