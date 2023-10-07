@@ -90,12 +90,11 @@ def mock_services():  # функция для получения набора у
     return services
 
 
-
 class Bank(models.Model):
     name = models.CharField(max_length=256)
     address = models.TextField()
-    latitude = models.DecimalField(max_digits=9, decimal_places=7)
-    longitude = models.DecimalField(max_digits=9, decimal_places=7)
+    latitude = models.CharField(max_length=25)
+    longitude = models.CharField(max_length=25)
     work_schedule = models.JSONField(default=shedule)
     services = models.JSONField(default=mock_services)
 

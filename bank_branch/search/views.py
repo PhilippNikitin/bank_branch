@@ -1,6 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
+from .models import Bank
 
 # Create your views here.
-
-def index(request):
-    return render(request, 'search/test.html', {'title': 'Test Template'})
