@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from search.views import populate_database, my_count
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('populate/', populate_database),
+    path('show_number/', my_count),
 ]

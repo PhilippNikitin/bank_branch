@@ -86,6 +86,16 @@ def mock_services():  # функция для получения набора у
     }
 
     services["card"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["loan"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["mortgage"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["credit"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["auto_loan"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["deposit_and_accounts"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["investment"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["online"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["biometric_data_collection"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["cash_deposit_for_legal_entities"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["agent_point_for_shares_placement_and_redemption"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
 
     return services
 

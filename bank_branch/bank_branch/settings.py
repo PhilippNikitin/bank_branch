@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
     'search',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +75,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bank_branch.wsgi.application'
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bank_branch.settings')
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
