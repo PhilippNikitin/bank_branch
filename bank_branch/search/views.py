@@ -5,6 +5,7 @@ import unicodedata
 
 # Create your views here.
 
+'''
 def populate_database(request):
     file_path = 'search/база данных.csv'
     with open(file_path, 'r', encoding='utf-8') as csvfile:
@@ -34,3 +35,6 @@ def my_count(request):
     print(counter)
 
     return render(request, 'search/b.html')
+
+
+'''
