@@ -1,7 +1,7 @@
+from decimal import Decimal
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-from geopy.distance import geodesic
 
 from search.models import Bank
 from search.serializers import BanksWithinMapBoundsSerializer, BankDetailsSerializer
@@ -9,15 +9,21 @@ from search.serializers import BanksWithinMapBoundsSerializer, BankDetailsSerial
 class BanksWithinMapBoundsView(APIView):
     def get(self, request):
         zoom = int(request.GET.get('zoom'))
-        bounds = [str(i) for i in request.GET.get('bounds').split(',')]  # bounds в формате (min_lat, min_lon, max_lat, max_lon)
-        # Рассчитываем координаты видимого участка карты на основе параметров масштаба
-
-        min_lat, max_lat, min_lon, max_lon = bounds[0], bounds[2], bounds[1], bounds[3]
+        bounds = [Decimal(i) for i in request.GET.get('bounds').split(',')]  # bounds в формате 'min_lat,min_lon,max_lat,max_lon'
+        min_lat, min_lon, max_lat, max_lon = bounds[0], bounds[1], bounds[2], bounds[3]
 
         # Ищем банки, находящиеся в пределах видимого участка карты
-        banks = Bank.objects.filter(latitude__gte=min_lat, latitude__lte=max_lat, longitude__gte=min_lon, longitude__lte=max_lon)
-        serializer = BanksWithinMapBoundsSerializer(banks, many=True)
-        return Response(serializer.data)
+        banks = Bank.objects.all()
+        filtered_banks = []
+        for bank in banks:
+            latitude = Decimal(bank.latitude)
+            longitude = Decimal(bank.longitude)
+            if min_lat <= latitude <= max_lat and min_lon <= longitude <= max_lon:
+                filtered_banks.append(bank)
+        serializer = BanksWithinMapBoundsSerializer(filtered_banks, many=True)
+
+        coordinates = [{"latitude": Decimal(bank.latitude), "longitude": Decimal(bank.longitude)} for bank in filtered_banks]
+        return Response(coordinates)
 
 class BankDetailsView(APIView):
     def get(self, request):
