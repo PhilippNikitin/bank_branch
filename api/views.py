@@ -61,20 +61,6 @@ class BankDetailAPIView(APIView):
         return Response(serializer.data)
 
 
-def update_banks(request):
-    services = ["card", "loan", "mortgage", "credit", "auto_loan", "deposit_and_accounts", "investment", "online",
-                "biometric_data_collection", "cash_deposit_for_legal_entities",
-                "agent_point_for_shares_placement_and_redemption"]
-    banks = Bank.objects.all()
-
-    for bank in banks:
-        # Удалить поле "peoples" из объекта "queue" для каждого сервиса
-        for service in services:
-            if 'peoples' in bank.queue.get(service, {}):
-                del bank.queue[service]['peoples']
-        bank.save()
-    update_banks = Bank.objects.all()
-    return render(request, 'search/a.html', {'banks': update_banks})
 
 
 
