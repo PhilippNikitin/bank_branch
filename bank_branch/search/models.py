@@ -1,5 +1,8 @@
-from django.db import models
+from datetime import datetime
 import random
+
+from django.db import models
+
 
 # Create your models here.
 
@@ -86,16 +89,16 @@ def mock_services():  # функция для получения набора у
     }
 
     services["card"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["loan"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["mortgage"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["credit"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["auto_loan"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["deposit_and_accounts"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["investment"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["online"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["biometric_data_collection"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["cash_deposit_for_legal_entities"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
-    services["agent_point_for_shares_placement_and_redemption"]["employees"] = random.randint(1, 6) if services["card"]["services"] else 0
+    services["loan"]["employees"] = random.randint(1, 6) if services["loan"]["services"] else 0
+    services["mortgage"]["employees"] = random.randint(1, 6) if services["mortgage"]["services"] else 0
+    services["credit"]["employees"] = random.randint(1, 6) if services["credit"]["services"] else 0
+    services["auto_loan"]["employees"] = random.randint(1, 6) if services["auto_loan"]["services"] else 0
+    services["deposit_and_accounts"]["employees"] = random.randint(1, 6) if services["deposit_and_accounts"]["services"] else 0
+    services["investment"]["employees"] = random.randint(1, 6) if services["investment"]["services"] else 0
+    services["online"]["employees"] = random.randint(1, 6) if services["online"]["services"] else 0
+    services["biometric_data_collection"]["employees"] = random.randint(1, 6) if services["biometric_data_collection"]["services"] else 0
+    services["cash_deposit_for_legal_entities"]["employees"] = random.randint(1, 6) if services["cash_deposit_for_legal_entities"]["services"] else 0
+    services["agent_point_for_shares_placement_and_redemption"]["employees"] = random.randint(1, 6) if services["agent_point_for_shares_placement_and_redemption"]["services"] else 0
 
     return services
 
@@ -107,6 +110,25 @@ class Bank(models.Model):
     longitude = models.CharField(max_length=25)
     work_schedule = models.JSONField(default=shedule)
     services = models.JSONField(default=mock_services)
+
+    def is_open_now(self):
+        current_time = datetime.now()
+        current_weekday = current_time.weekday()
+        current_hour = current_time.hour()
+        current_minute = current_time.minute()
+        current_time_str = f"{current_hour:02d}:{current_minute:02d}"
+
+        if str(current_weekday) == "Sunday":
+            return False
+        day_schedule = self.work_schedule[str(current_weekday)]
+        start_time = day_schedule.get("start_time")
+        end_time = day_schedule.get("end_time")
+
+        if start_time <= current_time_str <= end_time:
+            return True
+        else:
+            return False
+    
 
     def __str__(self):
         return f"Bank ({self.id})"
