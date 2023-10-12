@@ -104,56 +104,56 @@ def mock_services():  # функция для получения набора у
 def queue():
     queue = {
         "card": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 90 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "loan": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 80 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "mortgage": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 80 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "credit": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 80 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "auto_loan": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 80 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "deposit_and_accounts": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 90 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "investment": {
-            "peoples": 0,  # вероятность, что услуга будет оказываться, 50 %
+            "peoples": random.choices([i for i in range(6)]),  # вероятность, что услуга будет оказываться, 50 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "online": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 70 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "biometric_data_collection": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 30 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "cash_deposit_for_legal_entities": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 90 %
             "minutes": random.choices([5, 10, 15, 20])
         },
         "agent_point_for_shares_placement_and_redemption": {
-            "peoples": 0,
+            "peoples": random.choices([i for i in range(6)]),
             # вероятность, что услуга будет оказываться, 30 %
             "minutes": random.choices([5, 10, 15, 20])
         }
@@ -168,6 +168,7 @@ class Bank(models.Model):
     longitude = models.CharField(max_length=25)
     work_schedule = models.JSONField(default=shedule)
     services = models.JSONField(default=mock_services)
+    queue = models.JSONField(default=queue)
 
     def is_open_now(self):
         current_time = datetime.now()

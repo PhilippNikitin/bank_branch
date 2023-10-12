@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 import requests
 import requests
 import json
@@ -289,3 +289,20 @@ class BestBankView(APIView):  # для работы нужен сериализ�
 
         return Response(response_data)
 
+class StayQueue(APIView):
+    def get(self, request):
+        bank = Bank.objects.filter(id=request.query_params["id"])[0]
+        service = request.query_params["services"]
+        col_people = bank.queue[f"{service}"]["people"]
+        minutes_in_queue = bank.queue[service]["minutes"]
+        time_in_queue = col_people * minutes_in_queue
+
+        current_time = datetime.now()
+        # Добавляем время в очереди
+        queue_time = current_time + timedelta(minutes=time_in_queue[0])
+        # Преобразуем время в нужный формат (например, строку)
+        queue_time_formatted = queue_time.strftime("%Y-%m-%d %H:%M:%S")
+        number_talon = service.upper() + str(col_people + 1)
+        # Возвращаем время вместе с сообщением
+        response_data = f"Ваше время приема: {queue_time_formatted}, Ваш талон номер: {number_talon}"
+        return Response(response_data)
