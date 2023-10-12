@@ -1,6 +1,12 @@
+from datetime import datetime, time
+
+import requests
+import json
 import random
 
-from django.shortcuts import render
+from geopy.distance import geodesic
+from django.db.models import F, functions, fields
+from django.contrib.sites import requests
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -61,6 +67,195 @@ class BankDetailAPIView(APIView):
         return Response(serializer.data)
 
 
+class BestBankView(APIView):  # для работы нужен сериализатор, который получает из базы данных информацию: id, work_schedule, latitude, longitude, services. Необходимо учесть загруженность банков.
+    # 1. Получаем query_set из всех банков +
+    def get_all_banks(self):
+        return Bank.objects.all()
 
+    '''
+    2. фильтруем банки, если они сейчас работают или нет (опционально - с учетом часового пояса) Если не один из банков не работает, возвращаем ответ "В настоящее время ни один из банков не работает.
+    Наше рабочее время: ..."
+    '''
 
+    def get_working_banks(self):
+        banks = Bank.objects.all()
+        id_working_now = []
+
+        days_on_week = {0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 4: "Friday", 5: "Saturday"}
+
+        current_time = datetime.now()
+        current_weekday = current_time.weekday()
+
+        for bank in banks:
+            if current_weekday == 6 or bank.work_schedule[days_on_week[current_weekday]]["start_time"] == "Closed":
+                continue
+
+            start_time = datetime.strptime(bank.work_schedule[days_on_week[current_weekday]]["start_time"],
+                                           "%H:%M").time()
+            end_time = datetime.strptime(bank.work_schedule[days_on_week[current_weekday]]["end_time"], "%H:%M").time()
+
+            if start_time <= current_time.time() <= end_time:
+                id_working_now.append(bank.id)
+
+        working_banks = Bank.objects.filter(pk__in=id_working_now)
+        return id_working_now
+
+    # 3. достаем из запроса услуги +
+
+    def get_services(self, request):
+        # получаем из запроса список услуг, которые выбрал пользователь
+        services = request.query_params.get("services")  # получаем из запроса список услуг в формате строки без пробелов
+        services_list = [f'"{service}"' for service in services.lower().split(',')]  # получаем список из строк - услуг, выбранных пользователем, при этом каждая услуга заключена в двойные кавычки
+        return services_list
+
+    '''
+    4. фильтруем все банки по наличию услуг - остаются только те банки, в которых оказываются все интересующие клиента услуги. Если полного набора услуг в одном месте нет - возвращаем ответ
+    "Банка с полным набором указанных услуг не существует. Пожалуйста, уменьшите перечень услуг" +
+    '''
+
+    def get_banks_with_services(self, request):
+        services_set = set(self.get_services(request))
+        all_banks = self.get_all_banks()
+        id_of_banks_with_services = []  # список для хранения id банков
+
+        for bank in all_banks:
+            services_in_bank = set(bank.services.keys()) # множество услуг в текущем банке
+            if services_set.issubset(services_in_bank):
+                id_of_banks_with_services.append(bank.id)
+            id_of_banks_with_services.append(bank.id)
+        return id_of_banks_with_services
+
+        # else:
+        #     return Response({"error": "Банка, в котором оказываются все указанные услуги, не существует. Пожалуйста, уменьшите список услуг"},status=404)
+
+    # 6. получаем пересечение банков final_query, которые сейчас работают, и которые обладают всем необходимым перечнем услуг - с ними мы будем работать.
+
+    def get_final_queryset(self, request):
+        working = self.get_working_banks()
+        bank_services = self.get_banks_with_services(request)
+        print(bank_services)
+        final_queryset = list(working)
+        final_queryset = final_queryset.extend(bank_services)
+        final_queryset = set(final_queryset)
+        final_bank = Bank.objects.filter(pk__in=final_queryset)
+        return final_bank
+
+    '''
+    7. Далее создаем два словаря: в одном будут храниться банки, которые могут быть использованы для построения пешеходного маршрута; в другом - банки, которые могут быть использованы для построения автомобильного маршрута
+    Далее для каждого из полученного final_queryset банка рассчитываем время, за которое пользователь может до него добраться, и прибавляем ориентировочное время ожидания в очереди
+
+    '''
+
+    def get(self, request):
+        def find_walking_length(start_lat, start_lon, end_lat,
+                                end_lon):  # функция для нахождения длины пешеходного маршрута
+            # Формируем URL-адрес запроса к API маршрутизации
+            url = f"http://router.project-osrm.org/route/v1/walking/{start_lon},{start_lat};{end_lon},{end_lat}?overview=full&geometries=geojson"
+
+            # Отправляем GET-запрос и получаем данные маршрута
+            response = requests.get(url)
+            data = json.loads(response.text)
+
+            # Извлекаем координаты геометрии маршрута и считаем его длину
+            route_geometry = data['routes'][0]['geometry']
+            route_coordinates = [(point[1], point[0]) for point in route_geometry['coordinates']]
+            walking_length = sum(
+                geodesic(c1, c2).meters for c1, c2 in zip(route_coordinates[:-1], route_coordinates[1:]))
+
+            return walking_length
+
+        def find_driving_length(start_lat, start_lon, end_lat, end_lon):
+            # Формируем URL-адрес запроса к API маршрутизации
+            url = f"http://router.project-osrm.org/route/v1/driving/{start_lon},{start_lat};{end_lon},{end_lat}?overview=full&geometries=geojson"
+
+            # Отправляем GET-запрос и получаем данные маршрута
+            response = requests.get(url)
+            data = json.loads(response.text)
+
+            # Извлекаем координаты геометрии маршрута и считаем его длину
+            route_geometry = data['routes'][0]['geometry']
+            route_coordinates = [(point[1], point[0]) for point in route_geometry['coordinates']]
+            driving_length = sum(
+                geodesic(c1, c2).meters for c1, c2 in zip(route_coordinates[:-1], route_coordinates[1:]))
+
+            return driving_length
+
+        def get_workload():  # функция, которая возвращает загруженность исходя из времени суток
+            current_time = datetime.now().time()
+
+            if time(12, 0) <= current_time <= time(14, 0) or time(16, 0) <= current_time <= time(18, 0):
+                workload = "high"
+            elif time(14, 0) < current_time < time(16, 0) or time(11, 0) <= current_time < time(12, 0):
+                workload = "medium"
+            elif time(9, 0) <= current_time < time(11, 0):
+                workload = "low"
+            else:
+                workload = "unknown"
+
+            return workload
+
+        on_foot = {}  # словарь, в котором будут храниться банки, которые будут отбираться для пешеходного маршрута
+        on_car = {}  # словарь, в котором будут храниться банки, которые будут отбираться для автомобильного маршрута
+        user_banks = self.get_final_queryset(request)  # получаем final query_set (см. шаг 6)
+        start_lat = request.query_params.get("latitude")  # получаем широту начальной точки
+        start_lon = request.query_params.get("longitude")# получаем долготу начальной точки
+        if user_banks:
+            for bank in user_banks:
+                # находим длину пешеходного и автомобильного маршрутов
+                walking_length = find_walking_length(start_lat, start_lon, float(bank.latitude), float(
+                    bank.longitude))  # находим длину пешеходного маршрута для данного банка
+                driving_length = find_driving_length(start_lat, start_lon, float(bank.latitude), float(
+                    bank.longitude))  # находим длину автомобильного маршрута для данного банка
+
+                # находим приблизительное время, которое уйдет на пешеходный и автомобильный маршрут
+                walking_time = (walking_length / 5) * 60  # средняя скорость принята за 5 км/ч, время в минутах
+                driving_time = (driving_length / 50) * 60  # средняя скорость автомобиля принята за 50 км/ч, время в минутах
+
+                workload = get_workload()
+                total_walking_time = walking_time
+                total_driving_time = driving_time
+                if workload == 'low':
+                    total_walking_time = walking_time + 5
+                    total_driving_time = driving_time + 5
+
+                if workload == 'medium':
+                    total_walking_time = walking_time + 10
+                    total_driving_time = driving_time + 10
+
+                if workload == 'high':
+                    total_walking_time = walking_time + 20
+                    total_driving_time = driving_time + 20
+
+                on_foot[bank.id] = total_walking_time
+                on_car[bank.id] = total_driving_time
+        else:
+            return Response("empty user_banks")
+
+        min_walking_time = min(on_foot.values())  # минимальное время, за которое можно добраться до лучшего банка пешком
+        min_driving_time = min(on_car.values())  # минимальное время, за которое можно добраться до лучшего банка на машине
+
+        best_on_foot_bank_id = 0
+        best_on_car_bank_id = 0
+
+        for k, v in on_foot.items():
+            if v == min_walking_time:
+                best_on_foot_bank_id = k  # находим id банка, до которого удобнее всего добраться пешком
+
+        for k, v in on_car.items():
+            if v == min_driving_time:
+                best_on_car_bank_id = k
+
+        best_on_foot_bank = Bank.objects.filter(id=best_on_foot_bank_id)
+        best_on_foot_bank_serializer = BankSerializer(best_on_foot_bank)
+        best_on_foot_bank_data = best_on_foot_bank_serializer.data
+        best_on_foot_bank_data["label"] = "Лучший банк для пешеходного маршрута"
+
+        best_on_car_bank = Bank.objects.filter(id=best_on_car_bank_id)
+        best_on_car_bank_serializer = BankSerializer(best_on_car_bank)
+        best_on_car_bank_data = best_on_car_bank_serializer.data
+        best_on_car_bank_data["label"] = "Лучший банк для автомобильного маршрута"
+
+        response_data = [best_on_foot_bank_data, best_on_car_bank_data]
+
+        return Response(response_data)
 

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 import random
 
@@ -159,7 +161,6 @@ def queue():
     return queue
 
 
-
 class Bank(models.Model):
     name = models.CharField(max_length=256)
     address = models.TextField()
@@ -167,7 +168,24 @@ class Bank(models.Model):
     longitude = models.CharField(max_length=25)
     work_schedule = models.JSONField(default=shedule)
     services = models.JSONField(default=mock_services)
-    queue = models.JSONField(default=queue)
+
+    def is_open_now(self):
+        current_time = datetime.now()
+        current_weekday = current_time.weekday()
+        current_hour = current_time.hour()
+        current_minute = current_time.minute()
+        current_time_str = f"{current_hour:02d}:{current_minute:02d}"
+
+        if str(current_weekday) == "Sunday":
+            return False
+        day_schedule = self.work_schedule[str(current_weekday)]
+        start_time = day_schedule.get("start_time")
+        end_time = day_schedule.get("end_time")
+
+        if start_time <= current_time_str <= end_time:
+            return True
+        else:
+            return False
 
     def __str__(self):
         return f"Bank ({self.id})"
