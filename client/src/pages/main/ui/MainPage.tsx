@@ -3,9 +3,11 @@
 import { Box } from "@chakra-ui/react";
 import { SideDrawer } from "@/widgets/drawer/ui/SideDrawer";
 import { Navbar } from "@/widgets/navbar";
+import { useGetAllBanks } from "@/entities/bank";
 import { YMap } from "@/shared/ui/Map";
 
 export const MainPage = () => {
+  
   return (
     <Box>
       <Navbar />

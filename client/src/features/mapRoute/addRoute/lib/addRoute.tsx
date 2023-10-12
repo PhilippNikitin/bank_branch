@@ -21,6 +21,7 @@ export const addRoute = ({
           referencePoints: [pointA, pointB],
           params: {
             routingMode: routingMode,
+            reverseGeocoding: true,
           },
         },
 

@@ -1,4 +1,14 @@
 .map {
     height: calc(100vh - 64px);
     width: 100vw;
+    /* filter: hue-rotate(30deg);
+    -ms-filter: hue-rotate(360deg);
+    -webkit-filter: hue-rotate(100deg);
+    -moz-filter: hue-rotate(26deg);
+    -o-filter: hue-rotate(23deg);  */
+    /* filter: invert(80%);
+	-ms-filter: invert(90%);
+	-webkit-filter: invert(90%);
+	-moz-filter: invert(100%);
+	-o-filter: invert(100%); */
 }
