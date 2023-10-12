@@ -6,4 +6,5 @@ urlpatterns = [
     path('get-bank/', views.BankDetailAPIView.as_view(), name='get-bank'),
     path('best-banks/', views.BestBankView.as_view(), name='best-banks'),
     path('queue/', views.StayQueue.as_view(), name='queue'),
+    path('map-banks/', views.BanksWithinMapBoundsView.as_view(), name='map_bank'),
 ]

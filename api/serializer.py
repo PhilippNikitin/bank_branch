@@ -13,3 +13,8 @@ class BankSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bank
         fields = '__all__'
+
+class BanksWithinMapBoundsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bank
+        fields = ('name', 'latitude', 'longitude')

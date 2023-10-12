@@ -1,13 +1,10 @@
+from decimal import Decimal
 from datetime import datetime, time, timedelta
-import requests
-import requests
-import json
-from geopy.distance import geodesic
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from search.models import Bank
-from .serializer import AllBanksSerializer, BankSerializer
+from .serializer import AllBanksSerializer, BankSerializer, BanksWithinMapBoundsSerializer
 import math
 
 class BankListAPIView(generics.ListAPIView):
@@ -306,3 +303,22 @@ class StayQueue(APIView):
         # Возвращаем время вместе с сообщением
         response_data = f"Ваше время приема: {queue_time_formatted}, Ваш талон номер: {number_talon}"
         return Response(response_data)
+
+class BanksWithinMapBoundsView(APIView):
+    def get(self, request):
+        bounds = [Decimal(i) for i in request.GET.get('bounds').split(',')]  # bounds в формате 'min_lat,min_lon,max_lat,max_lon'
+        min_lat, min_lon, max_lat, max_lon = bounds[0], bounds[1], bounds[2], bounds[3]
+
+        # Ищем банки, находящиеся в пределах видимого участка карты
+        banks = Bank.objects.all()
+        filtered_banks = []
+        for bank in banks:
+            latitude = Decimal(bank.latitude)
+            longitude = Decimal(bank.longitude)
+            if min_lat <= latitude <= max_lat and min_lon <= longitude <= max_lon:
+                filtered_banks.append(bank)
+        serializer = BanksWithinMapBoundsSerializer(filtered_banks, many=True)
+
+        coordinates = [{"latitude": Decimal(bank.latitude), "longitude": Decimal(bank.longitude)} for bank in filtered_banks]
+        return Response(coordinates)
+
