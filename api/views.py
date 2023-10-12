@@ -1,12 +1,8 @@
 from datetime import datetime, time
-
+import requests
 import requests
 import json
-import random
-
 from geopy.distance import geodesic
-from django.db.models import F, functions, fields
-from django.contrib.sites import requests
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -105,7 +101,7 @@ class BestBankView(APIView):  # для работы нужен сериализ�
     def get_services(self, request):
         # получаем из запроса список услуг, которые выбрал пользователь
         services = request.query_params.get("services")  # получаем из запроса список услуг в формате строки без пробелов
-        services_list = [f'"{service}"' for service in services.lower().split(',')]  # получаем список из строк - услуг, выбранных пользователем, при этом каждая услуга заключена в двойные кавычки
+        services_list = [f'{service}' for service in services.lower().split(',')]  # получаем список из строк - услуг, выбранных пользователем, при этом каждая услуга заключена в двойные кавычки
         return services_list
 
     '''
@@ -122,7 +118,6 @@ class BestBankView(APIView):  # для работы нужен сериализ�
             services_in_bank = set(bank.services.keys()) # множество услуг в текущем банке
             if services_set.issubset(services_in_bank):
                 id_of_banks_with_services.append(bank.id)
-            id_of_banks_with_services.append(bank.id)
         return id_of_banks_with_services
 
         # else:
@@ -133,9 +128,8 @@ class BestBankView(APIView):  # для работы нужен сериализ�
     def get_final_queryset(self, request):
         working = self.get_working_banks()
         bank_services = self.get_banks_with_services(request)
-        print(bank_services)
         final_queryset = list(working)
-        final_queryset = final_queryset.extend(bank_services)
+        final_queryset.extend(bank_services)
         final_queryset = set(final_queryset)
         final_bank = Bank.objects.filter(pk__in=final_queryset)
         return final_bank
@@ -146,39 +140,74 @@ class BestBankView(APIView):  # для работы нужен сериализ�
 
     '''
 
+    '''
+    7.1 расстояние между точками
+    '''
+    def filter_queryset(self, latitude, longitude, radius, query_set):
+        lat1 = math.radians(float(latitude))
+        lon1 = math.radians(float(longitude))
+        R = 6371  # радиус Земли в километрах
+
+        queryset = []
+        for bank in query_set:
+            lat2 = math.radians(float(bank.latitude))
+            lon2 = math.radians(float(bank.longitude))
+
+            dlon = lon2 - lon1
+            dlat = lat2 - lat1
+
+            a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+            distance = R * c
+
+            if distance <= float(radius):
+                queryset.append(bank)
+
+        return queryset
     def get(self, request):
-        def find_walking_length(start_lat, start_lon, end_lat,
-                                end_lon):  # функция для нахождения длины пешеходного маршрута
-            # Формируем URL-адрес запроса к API маршрутизации
-            url = f"http://router.project-osrm.org/route/v1/walking/{start_lon},{start_lat};{end_lon},{end_lat}?overview=full&geometries=geojson"
+        def find_walking_length(start_lat, start_lon, end_lat, end_lon):
+            lat1 = math.radians(start_lat)
+            lon1 = math.radians(start_lon)
+            lat2 = math.radians(end_lat)
+            lon2 = math.radians(end_lon)
 
-            # Отправляем GET-запрос и получаем данные маршрута
-            response = requests.get(url)
-            data = json.loads(response.text)
+            # Радиус Земли в километрах
+            radius = 6371
 
-            # Извлекаем координаты геометрии маршрута и считаем его длину
-            route_geometry = data['routes'][0]['geometry']
-            route_coordinates = [(point[1], point[0]) for point in route_geometry['coordinates']]
-            walking_length = sum(
-                geodesic(c1, c2).meters for c1, c2 in zip(route_coordinates[:-1], route_coordinates[1:]))
+            # Разница между широтами и долготами
+            dlat = lat2 - lat1
+            dlon = lon2 - lon1
 
-            return walking_length
+            # Формула Хаверсайна
+            a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+            # Расстояние в километрах
+            distance = radius * c
+
+            return distance
 
         def find_driving_length(start_lat, start_lon, end_lat, end_lon):
-            # Формируем URL-адрес запроса к API маршрутизации
-            url = f"http://router.project-osrm.org/route/v1/driving/{start_lon},{start_lat};{end_lon},{end_lat}?overview=full&geometries=geojson"
+            lat1 = math.radians(start_lat)
+            lon1 = math.radians(start_lon)
+            lat2 = math.radians(end_lat)
+            lon2 = math.radians(end_lon)
 
-            # Отправляем GET-запрос и получаем данные маршрута
-            response = requests.get(url)
-            data = json.loads(response.text)
+            # Радиус Земли в километрах
+            radius = 6371
 
-            # Извлекаем координаты геометрии маршрута и считаем его длину
-            route_geometry = data['routes'][0]['geometry']
-            route_coordinates = [(point[1], point[0]) for point in route_geometry['coordinates']]
-            driving_length = sum(
-                geodesic(c1, c2).meters for c1, c2 in zip(route_coordinates[:-1], route_coordinates[1:]))
+            # Разница между широтами и долготами
+            dlat = lat2 - lat1
+            dlon = lon2 - lon1
 
-            return driving_length
+            # Формула Хаверсайна
+            a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+            # Расстояние в километрах
+            distance = radius * c
+
+            return distance
 
         def get_workload():  # функция, которая возвращает загруженность исходя из времени суток
             current_time = datetime.now().time()
@@ -194,18 +223,19 @@ class BestBankView(APIView):  # для работы нужен сериализ�
 
             return workload
 
+
+
         on_foot = {}  # словарь, в котором будут храниться банки, которые будут отбираться для пешеходного маршрута
         on_car = {}  # словарь, в котором будут храниться банки, которые будут отбираться для автомобильного маршрута
         user_banks = self.get_final_queryset(request)  # получаем final query_set (см. шаг 6)
         start_lat = request.query_params.get("latitude")  # получаем широту начальной точки
         start_lon = request.query_params.get("longitude")# получаем долготу начальной точки
+
         if user_banks:
             for bank in user_banks:
                 # находим длину пешеходного и автомобильного маршрутов
-                walking_length = find_walking_length(start_lat, start_lon, float(bank.latitude), float(
-                    bank.longitude))  # находим длину пешеходного маршрута для данного банка
-                driving_length = find_driving_length(start_lat, start_lon, float(bank.latitude), float(
-                    bank.longitude))  # находим длину автомобильного маршрута для данного банка
+                walking_length = find_walking_length(float(start_lat), float(start_lon), float(bank.latitude), float(bank.longitude))  # находим длину пешеходного маршрута для данного банка
+                driving_length = find_driving_length(float(start_lat), float(start_lon), float(bank.latitude), float(bank.longitude))  # находим длину автомобильного маршрута для данного банка
 
                 # находим приблизительное время, которое уйдет на пешеходный и автомобильный маршрут
                 walking_time = (walking_length / 5) * 60  # средняя скорость принята за 5 км/ч, время в минутах
@@ -246,12 +276,12 @@ class BestBankView(APIView):  # для работы нужен сериализ�
                 best_on_car_bank_id = k
 
         best_on_foot_bank = Bank.objects.filter(id=best_on_foot_bank_id)
-        best_on_foot_bank_serializer = BankSerializer(best_on_foot_bank)
+        best_on_foot_bank_serializer = BankSerializer(best_on_foot_bank[0])
         best_on_foot_bank_data = best_on_foot_bank_serializer.data
         best_on_foot_bank_data["label"] = "Лучший банк для пешеходного маршрута"
 
         best_on_car_bank = Bank.objects.filter(id=best_on_car_bank_id)
-        best_on_car_bank_serializer = BankSerializer(best_on_car_bank)
+        best_on_car_bank_serializer = BankSerializer(best_on_car_bank[0])
         best_on_car_bank_data = best_on_car_bank_serializer.data
         best_on_car_bank_data["label"] = "Лучший банк для автомобильного маршрута"
 
