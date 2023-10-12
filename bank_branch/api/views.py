@@ -141,36 +141,46 @@ class BestBankView(APIView):  # для работы нужен сериализ�
             walking_time = (walking_length / 5) * 60  # средняя скорость принята за 5 км/ч, время в минутах
             driving_time = (driving_length / 50) * 60 # средняя скорость автомобиля принята за 50 км/ч, время в минутах
 
-            workload = random.choices(['Низкая', 'Средняя', 'Высокая'])
+            workload = random.choices(['Низкая', 'Средняя', 'Высокая'])  # загруженность генерируется рандомно для каждого банка
             if workload == 'Низкая':
                 total_walking_time = walking_time + 5
                 total_driving_time = driving_time + 5
 
+            if workload == 'Средняя':
+                total_walking_time = walking_time + 10
+                total_driving_time = driving_time + 10
 
-            '''
-            8. Ориентировочное количество человек в очереди:
-            n // количество окон) * среднее время оказания одной услуги
-            '''
+            if workload == 'Высокая':
+                total_walking_time = walking_time + 20
+                total_driving_time = driving_time + 20
 
+            on_foot[bank.id] = total_walking_time
+            on_car[bank.id] = total_driving_time
 
+        min_walking_time = min(on_foot.keys())  # минимальное время, за которое можно добраться до лучшего банка пешком
+        min_driving_time = min(on_car.keys())  # минимальное время, за которое можно добраться до лучшего банка на машине
 
+        for k, v in on_foot.items():
+            if v == min_walking_time:
+                best_on_foot_bank_id = k  # находим id банка, до которого удобнее всего добраться пешком
 
-
-
-
-
-    # 9. Из словарей получаем банк с минимальным временем ожидания - и для пешеходного маршрута, и для автомобильного. По id находим координаты данных двух банков
-
-    # 10. Возвращаем координаты лучших банков на клиент
-
-    # ????????
-
-    # PROFIT.
-     
-
-    
+        for k, v in on_car.items():
+            if v == total_driving_time:
+                best_on_car_bank_id = k  # находим id банка, до которого удобнее всего добраться на машине
 
 
+        best_on_foot_bank = Bank.objects.filter(id=best_on_foot_bank_id)
+        best_on_foot_bank_serializer = BankDetailsSerializer(best_on_foot_bank)
+        best_on_foot_bank_data = best_on_foot_bank_serializer.data
+        best_on_foot_bank_data["label"] = "Лучший банк для пешеходного маршрута"
 
+        best_on_car_bank = Bank.objects.filter(id=best_on_car_bank_id)
+        best_on_car_bank_serializer = BankDetailsSerializer(best_on_car_bank)
+        best_on_car_bank_data = best_on_car_bank_serializer.data
+        best_on_car_bank_data["label"] = "Лучший банк для автомобильного маршрута"
+
+        response_data = [best_on_foot_bank_data, best_on_car_bank_data]
+        
+        return Response(response_data)
 
 
