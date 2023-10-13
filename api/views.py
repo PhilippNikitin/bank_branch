@@ -78,9 +78,8 @@ class BestBankView(APIView):  # для работы нужен сериализ�
 
         current_time = datetime.now()
         current_weekday = current_time.weekday()
-
         for bank in banks:
-            if current_weekday == 6 or bank.work_schedule[days_on_week[current_weekday]]["start_time"] == "Closed":
+            if current_weekday == 6:
                 continue
 
             start_time = datetime.strptime(bank.work_schedule[days_on_week[current_weekday]]["start_time"],
@@ -89,8 +88,6 @@ class BestBankView(APIView):  # для работы нужен сериализ�
 
             if start_time <= current_time.time() <= end_time:
                 id_working_now.append(bank.id)
-
-        working_banks = Bank.objects.filter(pk__in=id_working_now)
         return id_working_now
 
     # 3. достаем из запроса услуги +
@@ -125,9 +122,7 @@ class BestBankView(APIView):  # для работы нужен сериализ�
     def get_final_queryset(self, request):
         working = self.get_working_banks()
         bank_services = self.get_banks_with_services(request)
-        final_queryset = list(working)
-        final_queryset.extend(bank_services)
-        final_queryset = set(final_queryset)
+        final_queryset = set(working).intersection(set(bank_services))
         final_bank = Bank.objects.filter(pk__in=final_queryset)
         return final_bank
 
@@ -257,22 +252,10 @@ class BestBankView(APIView):  # для работы нужен сериализ�
         else:
             return Response("empty user_banks")
 
-        min_walking_time = min(on_foot.values())  # минимальное время, за которое можно добраться до лучшего банка пешком
-        min_driving_time = min(on_car.values())  # минимальное время, за которое можно добраться до лучшего банка на машине
         best_on_foot_bank_id = min(on_foot, key=on_foot.get)
         best_on_car_bank_id = min(on_car, key=on_car.get)
-        min_key = min(on_foot, key=on_foot.get)
 
         # Выводим найденный ключ и его значение
-        print("Ключ с минимальным значением:", min_key)
-        print("Минимальное значение:", on_foot[min_key])
-        # for k, v in on_foot.items():
-        #     if v == min_walking_time:
-        #         best_on_foot_bank_id = k  # находим id банка, до которого удобнее всего добраться пешком
-        #
-        # for k, v in on_car.items():
-        #     if v == min_driving_time:
-        #         best_on_car_bank_id = k
 
         best_on_foot_bank = Bank.objects.filter(id=best_on_foot_bank_id)
         best_on_foot_bank_serializer = BankSerializer(best_on_foot_bank[0])
