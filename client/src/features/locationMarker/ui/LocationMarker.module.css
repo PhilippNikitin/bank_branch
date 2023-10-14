@@ -1,0 +1,9 @@
+.locationMarker{
+    /* display: flex;
+    justify-content: left; */
+    z-index: 1000;
+    position: absolute;
+    left: 97% !important;
+    top: 55%
+   
+}

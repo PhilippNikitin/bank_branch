@@ -1,0 +1,19 @@
+.marker{
+    background: #1A1E23;
+    border: 4px solid #4789EB;
+    border-radius: 50%;
+    color: white;
+    /* height: 33px; */
+    line-height: 25px; 
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    /* width: 33px; */
+    text-align: center;
+    margin-left: -16.5px;
+    margin-top: -16.5px;
+    width: 33px;
+    height: 33px;
+    transform: translate3d(756px, 242px, 0px);
+    z-index: 242;
+  }

@@ -1,25 +1,14 @@
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Heading,
-  Stack,
-  Flex,
-  StackDivider,
-  useTheme
-} from "@chakra-ui/react";
+import { Card } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import SideDrawerSearch from "./SideDrawerSearch";
-import { SideDrawerFilter } from "./SideDrawerFilter";
-import { SideDrawerBankCard } from './SideDrawerBankCard';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
+import { SideDrawerBankCard } from './SideDrawerBankCard';
+import { SideDrawerFilter } from "./SideDrawerFilter";
 
 
 export const SideDrawer = () => {
   const refBank = useRef();
   const ref = useRef();
   const [value, setValue] = useState("");
-  const [isSelectedBank, setIsSelectedBank] = useState(true);
 
   return (
     <Card

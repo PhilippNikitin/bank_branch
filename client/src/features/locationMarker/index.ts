@@ -1,0 +1,1 @@
+export { LocationMarker } from './ui/LocationMarker'
