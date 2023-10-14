@@ -4,7 +4,8 @@
 npm install - установка зависимостей
 npm run dev на vite - сборка
 ```
-
+## Установка legacy-peer-deps
+npm install --legacy-peer-deps react-flippy
 ---
 
 ## Скрипты
