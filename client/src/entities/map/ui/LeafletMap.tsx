@@ -24,7 +24,7 @@ export const LeafletMap = () => {
       center={[55.582026, 37.3855235]}
       zoom={13}
       zoomControl={false}
-      bounds={}
+    // bounds={}
     >
       <TileLayer
         referrerPolicy={false}

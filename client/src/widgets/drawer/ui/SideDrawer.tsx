@@ -5,7 +5,6 @@ import { SideDrawerBankCard } from './SideDrawerBankCard';
 import { SideDrawerFilter } from "./SideDrawerFilter";
 import SideDrawerSearch from "./SideDrawerSearch";
 
-
 export const SideDrawer = () => {
   const refBank = useRef();
   const ref = useRef();
