@@ -1,9 +1,9 @@
 import requests
 import json
-import random
 
 from decimal import Decimal
 from geopy.distance import geodesic
+from datetime import datetime, time
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,7 +14,6 @@ from search.serializers import BanksWithinMapBoundsSerializer, BankDetailsSerial
 
 class BanksWithinMapBoundsView(APIView):
     def get(self, request):
-        zoom = int(request.GET.get('zoom'))
         bounds = [Decimal(i) for i in request.GET.get('bounds').split(',')]  # bounds в формате 'min_lat,min_lon,max_lat,max_lon'
         min_lat, min_lon, max_lat, max_lon = bounds[0], bounds[1], bounds[2], bounds[3]
 
@@ -56,8 +55,11 @@ class BestBankView(APIView):  # для работы нужен сериализ�
     Наше рабочее время: ..."
     '''
     def get_working_banks(self):
-        working_banks = Bank.objects.filter(is_open_now = True)
-        return working_banks if len(working_banks) > 0 else Response({"error": "В настоящее время ни один из банков не работает. Пожалуйста, обратитесь в наше рабочее время"}, status=404)
+        banks = Bank.objects.all()
+        working_banks = [bank for bank in banks if bank.is_open_now()]
+        return working_banks if len(working_banks) > 0 else Response(
+            {"error": "В настоящее время ни один из банков не работает. Пожалуйста, обратитесь в наше рабочее время"},
+            status=404)
     
     # 3. достаем из запроса услуги +
 
@@ -127,6 +129,21 @@ class BestBankView(APIView):  # для работы нужен сериализ�
 
             return driving_length
 
+        def get_workload():  # функция, которая возвращает загруженность исходя из времени суток
+            current_time = datetime.now().time()
+
+            if time(12, 0) <= current_time <= time(14, 0) or time(16, 0) <= current_time <= time(18, 0):
+                workload = "high"
+            elif time(14, 0) < current_time < time(16, 0) or time(11, 0) <= current_time < time(12, 0):
+                workload = "medium"
+            elif time(9, 0) <= current_time < time(11, 0):
+                workload = "low"
+            else:
+                workload = "unknown"
+
+            return workload
+
+
         on_foot = {}  # словарь, в котором будут храниться банки, которые будут отбираться для пешеходного маршрута
         on_car = {}  # словарь, в котором будут храниться банки, которые будут отбираться для автомобильного маршрута
         user_banks = self.get_final_queryset(request)  # получаем final query_set (см. шаг 6)
@@ -141,16 +158,16 @@ class BestBankView(APIView):  # для работы нужен сериализ�
             walking_time = (walking_length / 5) * 60  # средняя скорость принята за 5 км/ч, время в минутах
             driving_time = (driving_length / 50) * 60 # средняя скорость автомобиля принята за 50 км/ч, время в минутах
 
-            workload = random.choices(['Низкая', 'Средняя', 'Высокая'])  # загруженность генерируется рандомно для каждого банка
-            if workload == 'Низкая':
+            workload = get_workload()
+            if workload == 'low':
                 total_walking_time = walking_time + 5
                 total_driving_time = driving_time + 5
 
-            if workload == 'Средняя':
+            if workload == 'medium':
                 total_walking_time = walking_time + 10
                 total_driving_time = driving_time + 10
 
-            if workload == 'Высокая':
+            if workload == 'high':
                 total_walking_time = walking_time + 20
                 total_driving_time = driving_time + 20
 
@@ -166,8 +183,8 @@ class BestBankView(APIView):  # для работы нужен сериализ�
                 best_on_foot_bank_id = k  # находим id банка, до которого удобнее всего добраться пешком
 
         for k, v in on_car.items():
-            if v == total_driving_time:
-                best_on_car_bank_id = k  # находим id банка, до которого удобнее всего добраться на машине
+            if v == min_driving_time:
+                best_on_car_bank_id = k
 
 
         best_on_foot_bank = Bank.objects.filter(id=best_on_foot_bank_id)

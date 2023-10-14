@@ -8,31 +8,31 @@ from django.db import models
 
 def shedule():  # функция для получения расписания работы банка в JSON формате
     work_schedule = {
-    "Monday": {
+    0 : {  # "Monday"
         "start_time": "09:00",
         "end_time": "18:00"
     },
-    "Tuesday": {
+    1 : {  # "Tuesday"
         "start_time": "09:00",
         "end_time": "18:00"
     },
-    "Wednesday": {
+    2 : {  # "Wednesday"
         "start_time": "09:00",
         "end_time": "18:00"
     },
-    "Thursday": {
+    3 : {  # "Thursday"
         "start_time": "09:00",
         "end_time": "18:00"
     },
-    "Friday": {
+    4 : {  # "Friday"
         "start_time": "09:00",
         "end_time": "18:00"
     },
-    "Saturday": {
+    5 : {  # "Saturday"
         "start_time": "09:00",
         "end_time": "15:00"
     },
-    "Sunday": {
+    6 : {  # "Sunday"
         "start_time": "Closed",
         "end_time": "Closed"
     }
@@ -114,8 +114,8 @@ class Bank(models.Model):
     def is_open_now(self):
         current_time = datetime.now()
         current_weekday = current_time.weekday()
-        current_hour = current_time.hour()
-        current_minute = current_time.minute()
+        current_hour = current_time.hour
+        current_minute = current_time.minute
         current_time_str = f"{current_hour:02d}:{current_minute:02d}"
 
         if str(current_weekday) == "Sunday":
