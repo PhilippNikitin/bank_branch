@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import BanksWithinMapBoundsView, BankDetailsView
+from .views import BanksWithinMapBoundsView, BankDetailsView, BestBankView
 
 app_name = 'api'
 

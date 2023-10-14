@@ -154,6 +154,7 @@ class BestBankView(APIView):  # для работы нужен сериализ�
                 total_walking_time = walking_time + 20
                 total_driving_time = driving_time + 20
 
+
             on_foot[bank.id] = total_walking_time
             on_car[bank.id] = total_driving_time
 
