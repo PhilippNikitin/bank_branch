@@ -1,0 +1,1 @@
+export { AllBanksWithYMap } from './getAllBanks/ui/AllBanksWithYMap'

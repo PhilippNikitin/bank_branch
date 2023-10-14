@@ -1,13 +1,17 @@
 import {
   GeolocationControl,
   Map,
+  Placemark,
   YMaps,
   ZoomControl,
 } from "@pbe/react-yandex-maps";
 import { YMapsApi } from "@pbe/react-yandex-maps/typings/util/typing";
-import { useRef } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 
+import { AllBanksWithYMap } from "@/features/bank";
 import { addRoute } from "@/features/mapRoute/addRoute/lib/addRoute";
+import { useGetAllBanks } from "@/entities/bank";
+import { useUserStore } from "@/entities/user";
 import cls from "./Map.module.css";
 type YMapProps = {
   apiKey: string;
@@ -18,22 +22,28 @@ type YMapProps = {
 };
 export const YMap = (props: YMapProps) => {
   const { apiKey } = props;
-
   const map = useRef<ymaps.Map>();
-  const route = (ymap: YMapsApi) =>
-    addRoute({
-      pointA: [55.749, 37.524],
-      pointB: [59.918072, 30.304908],
-      routingMode: "auto",
-      map: map.current,
-      ymaps: ymap,
-    });
+
+  const currentPosition = useUserStore((state) => state.currentCoords);
+  const setCurrentPosition = useUserStore((state) => state.setCurrentCoords);
+
+  const route = useCallback(
+    (ymap: YMapsApi) =>
+      addRoute({
+        pointA: [55.749, 37.524],
+        pointB: [currentPosition.latitude, currentPosition.longitude],
+        routingMode: "auto",
+        map: map.current,
+        ymaps: ymap,
+      }),
+    [currentPosition.latitude, currentPosition.longitude]
+  );
 
   return (
     <YMaps query={{ apikey: apiKey }}>
       <Map
         modules={["multiRouter.MultiRoute", "SuggestView"]}
-        defaultState={{ center: [55.751574, 37.573856], zoom: 9 }}
+        defaultState={{ center: [55.751574, 37.573856], zoom: 11 }}
         className={cls.map}
         options={{
           yandexMapDisablePoiInteractivity: true,
@@ -46,6 +56,7 @@ export const YMap = (props: YMapProps) => {
         instanceRef={map}
         onLoad={route}
       >
+        <AllBanksWithYMap />
         <ZoomControl
           options={{
             size: "small",
@@ -57,6 +68,15 @@ export const YMap = (props: YMapProps) => {
         />
 
         <GeolocationControl
+          onClick={() =>
+            navigator?.geolocation?.getCurrentPosition((data) => {
+              setCurrentPosition({
+                latitude: data.coords.latitude,
+                longitude: data.coords.longitude,
+              });
+              console.log(currentPosition);
+            })
+          }
           options={{
             position: { right: "16px", bottom: "164px" },
           }}
