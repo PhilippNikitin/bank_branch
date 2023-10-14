@@ -29,7 +29,7 @@
     //   "types/",
     // ],
     "types": [
-      "types/",
+      "/types",
       "vite-plugin-svgr/client"
     ],
     "baseUrl": "./src",

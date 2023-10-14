@@ -1,9 +1,7 @@
 import L from "leaflet";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { AllBanks } from "@/features/bank/ui/AllBanks";
-import { Search } from "@/features/geoSearch";
 import { LocationMarker } from "@/features/locationMarker";
 import { RoutingMachine } from "@/features/mapRoute/addRoute";
 import cls from "./Map.module.css";
@@ -31,7 +29,7 @@ export const LeafletMap = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <RoutingMachine
-        waypoints={(L.latLng(55.58, 37.38), L.latLng(55.59, 37.39))}
+        waypoints={(L.latLng(55.58, 37.38), L.latLng(55.  59, 37.39))}
         ref={rMachine}
       />
       <AllBanks />

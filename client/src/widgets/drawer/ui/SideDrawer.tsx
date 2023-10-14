@@ -1,12 +1,8 @@
-import {
-  Card,
-  CardBody
-} from "@chakra-ui/react";
+import { Card, CardBody } from "@chakra-ui/react";
 import { useState } from "react";
 import { SideDrawerFilter } from "./SideDrawerFilter";
 
 export const SideDrawer = () => {
-
   const [value, setValue] = useState("");
 
   return (
