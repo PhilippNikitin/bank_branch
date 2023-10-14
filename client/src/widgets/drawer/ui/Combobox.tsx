@@ -1,31 +1,40 @@
-import { theme } from "@/app/styles/global";
 import { Box, Input, ListItem, UnorderedList } from "@chakra-ui/react";
-import { useCombobox } from "downshift"
+import { useCombobox } from "downshift";
 import { useState } from "react";
+import { theme } from "@/app/styles/global";
 
 interface DropDownComboboxProps {
-  initialState: string[],
-  options: Options,
-  // selectedItem: string;
-  // onChange: (value: string) => void;
+  initialState: string[];
+  options: Options;
+  selectedItem: string;
+  onChange: (value: string) => void;
 }
 
-export function DropdownCombobox({ initialState, options, onChange, selectedItem }: DropDownComboboxProps) {
-
+export function DropdownCombobox({
+  initialState,
+  options,
+  onChange,
+  selectedItem,
+}: DropDownComboboxProps) {
   function getItemsFilter(inputValue: string) {
-    const lowerCasedInputValue = inputValue.toLowerCase()
+    const lowerCasedInputValue = inputValue.toLowerCase();
 
     return function itemsFilter(item: string) {
       return (
         !inputValue ||
         item.toLowerCase().includes(lowerCasedInputValue) ||
         item.toLowerCase().includes(lowerCasedInputValue)
-      )
-    }
+      );
+    };
   }
 
-  function ComboBox({ initialState, options, onChange, selectedItem }: DropDownComboboxProps) {
-    const [items, setItems] = useState(initialState)
+  function ComboBox({
+    initialState,
+    options,
+    onChange,
+    selectedItem,
+  }: DropDownComboboxProps) {
+    const [items, setItems] = useState(initialState);
 
     const {
       isOpen,
@@ -37,18 +46,20 @@ export function DropdownCombobox({ initialState, options, onChange, selectedItem
     } = useCombobox({
       onInputValueChange({ inputValue }) {
         if (typeof inputValue === "string") {
-          setItems(initialState.filter(getItemsFilter(inputValue)))
+          setItems(initialState.filter(getItemsFilter(inputValue)));
         } else {
-          throw new Error('Custom Error: Combobox onInputValueChange else statement')
+          throw new Error(
+            "Custom Error: Combobox onInputValueChange else statement"
+          );
         }
       },
       items,
       selectedItem,
       onSelectedItemChange: ({ selectedItem }) => {
-        onChange(selectedItem || '');
+        onChange(selectedItem || "");
       },
-      itemToString: (item) => item || '',
-    })
+      itemToString: (item) => item || "",
+    });
     return (
       <Box>
         <Box>
@@ -67,30 +78,38 @@ export function DropdownCombobox({ initialState, options, onChange, selectedItem
               aria-label="toggle menu"
               type="button"
               {...getToggleButtonProps()}
-            >
-            </button>
+            ></button>
           </Box>
         </Box>
-        <UnorderedList maxHeight={'60px'} overflow={'auto'} spacing={1} sx={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "gray.300 transparent",
-          "&::-webkit-scrollbar": {
-            width: "6px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "transparent",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "gray.300",
-            borderRadius: "3px",
-          },
-        }} {...getMenuProps()}>
+        <UnorderedList
+          maxHeight={"60px"}
+          overflow={"auto"}
+          spacing={1}
+          sx={{
+            scrollbarWidth: "thin",
+            scrollbarColor: "gray.300 transparent",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "gray.300",
+              borderRadius: "3px",
+            },
+          }}
+          {...getMenuProps()}
+        >
           {isOpen &&
             items.map((item, index) => (
-              <ListItem listStyleType={"none"}
-                cursor={'pointer'}
+              <ListItem
+                listStyleType={"none"}
+                cursor={"pointer"}
                 style={
-                  highlightedIndex === index ? { backgroundColor: `${theme.colors.grey.vtb_hardgrey}` } : {}
+                  highlightedIndex === index
+                    ? { backgroundColor: `${theme.colors.grey.vtb_hardgrey}` }
+                    : {}
                 }
                 key={`${item}${index}`}
                 {...getItemProps({ item, index })}
@@ -100,7 +119,14 @@ export function DropdownCombobox({ initialState, options, onChange, selectedItem
             ))}
         </UnorderedList>
       </Box>
-    )
+    );
   }
-  return <ComboBox initialState={initialState} options={options} onChange={onChange} selectedItem={selectedItem} />
+  return (
+    <ComboBox
+      initialState={initialState}
+      options={options}
+      onChange={onChange}
+      selectedItem={selectedItem}
+    />
+  );
 }
