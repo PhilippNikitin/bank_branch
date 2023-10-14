@@ -1,17 +1,9 @@
 import {
   Card,
-  CardBody,
-  CardHeader,
-  Heading,
-  Stack,
-  Flex,
-  StackDivider,
-  useTheme
+  CardBody
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { SideDrawerBankCard } from './SideDrawerBankCard';
 import { SideDrawerFilter } from "./SideDrawerFilter";
-import SideDrawerSearch from "./SideDrawerSearch";
 
 export const SideDrawer = () => {
 
