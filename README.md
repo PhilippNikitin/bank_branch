@@ -114,6 +114,16 @@ npm run dev на vite
 
 
 - На [Vite](https://vitejs.dev/) - `vite.config.ts`
+## Работа с картами
+Для работы с картами используетя [React-Leaflet]
+
+Для построения маршрутов [leaflet-routing-machine]
+
+Для геокодирования [leaflet-geosearch]
+
+## Стили
+
+Для стилизации в проекте используетя UI библеотека [Chakra UI]
 
 
 ## Работа с данными
