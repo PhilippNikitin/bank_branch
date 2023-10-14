@@ -28,7 +28,6 @@ export const AllBanks = () => {
       html: `<span style={display:block}>${cluster.getChildCount()}</span>`,
     });
   };
-
   return (
     <>
       <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>

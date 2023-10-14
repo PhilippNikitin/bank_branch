@@ -32,10 +32,10 @@ export const SideDrawer = () => {
         "&::-webkit-scrollbar-track": {
           background: "transparent",
         },
-        "&::-webkit-scrollbar-thumb": {
-          background: "gray.300",
-          borderRadius: "3px",
-        },
+        // "&::-webkit-scrollbar-thumb": {
+        //   background: "gray.300",
+        //   borderRadius: "3px",
+        // },
       }}
     >
       <Flippy flipOnClick={false} ref={refBank}>
