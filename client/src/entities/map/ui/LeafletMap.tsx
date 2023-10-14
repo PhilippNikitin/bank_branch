@@ -1,4 +1,4 @@
-import L from "leaflet";
+import L, { Bounds } from "leaflet";
 import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { AllBanks } from "@/features/bank/ui/AllBanks";
@@ -16,6 +16,7 @@ export const LeafletMap = () => {
       ]);
     }
   }, [rMachine]);
+
   return (
     <MapContainer
       attributionControl={false}
@@ -23,6 +24,7 @@ export const LeafletMap = () => {
       center={[55.582026, 37.3855235]}
       zoom={13}
       zoomControl={false}
+      bounds={}
     >
       <TileLayer
         referrerPolicy={false}
