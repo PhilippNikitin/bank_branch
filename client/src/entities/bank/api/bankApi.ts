@@ -45,6 +45,7 @@ export const useGetBankDetailsById = (id: ReqBankDetails) => {
   });
   return queryResult;
 };
+
 export const useGetCorrectBank = ({
   latitude,
   longitude,

@@ -22,7 +22,7 @@ export const LocationMarker = () => {
         latitude: e.latlng.lat,
         longitude: e.latlng.lng,
       });
-      map.flyTo(e.latlng, map.getZoom());
+      map.flyTo(e.latlng, map.getZoom(), { noMoveStart: true });
       // const radius = e.accuracy;
       // const circle = L.circle(e.latlng, 1000, { opacity: 0.1 });
       // circle.addTo(map);

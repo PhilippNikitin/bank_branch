@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { Marker } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useGetAllBanks } from "@/entities/bank";
-import { useUserStore } from "@/entities/user";
 import { useBankStore } from "@/entities/bank/model/bankStore";
+import { useUserStore } from "@/entities/user";
 import VtbPointMap from "@/shared/assets/VtbPointMap.svg";
 import cls from "./AllBank.module.css";
 export const AllBanks = () => {

@@ -16,6 +16,7 @@ const createRoutineMachineLayer = (props) => {
     waypoints: waypoints,
     show: false,
     addWaypoints: false,
+    useZoomParameter: true,
     routeWhileDragging: true,
     fitSelectedRoutes: true,
     showAlternatives: true,
