@@ -13,7 +13,7 @@ export const LeafletMap = () => {
     if (rMachine.current) {
       rMachine.current.setWaypoints([
         L.latLng(userCoords.latitude, userCoords.longitude),
-        L.latLng(55.59, 37.39),
+        L.latLng(56.03880347410402, 92.91706748849079),
       ]);
     }
   }, [rMachine, userCoords.latitude, userCoords.longitude]);
@@ -34,7 +34,7 @@ export const LeafletMap = () => {
       <RoutingMachine
         waypoints={
           (L.latLng(userCoords.latitude, userCoords.longitude),
-            L.latLng(55.59, 37.39))
+            L.latLng(56.03880347410402, 92.91706748849079))
         }
         ref={rMachine}
       />

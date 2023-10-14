@@ -1,20 +1,23 @@
-import { Clusterer, Placemark } from "@pbe/react-yandex-maps";
-import { Icon, divIcon, point } from "leaflet";
-import L from "leaflet";
-import { MarkerCluster } from "leaflet";
-import { memo, useState, useEffect } from "react";
-import { Marker, Popup } from "react-leaflet";
+import L, { Icon, MarkerCluster, divIcon } from "leaflet";
+import { useEffect } from "react";
+import { Marker } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { useGetAllBanks, useGetBankDetailsById } from "@/entities/bank";
+import { useGetAllBanks } from "@/entities/bank";
+import { useUserStore } from "@/entities/user";
+import { useBankStore } from "@/entities/bank/model/bankStore";
 import VtbPointMap from "@/shared/assets/VtbPointMap.svg";
 import cls from "./AllBank.module.css";
 export const AllBanks = () => {
-  const { data: points } = useGetAllBanks({
+  const currentPosition = useUserStore((state) => state.currentCoords);
+  const setCurrentBankId = useBankStore((state) => state.setCurrentBank);
+  const { data: points, refetch } = useGetAllBanks({
     raduis: 10,
-    latitude: 55.759073,
-    longitude: 37.717201,
+    latitude: currentPosition.latitude,
+    longitude: currentPosition.longitude,
   });
-
+  useEffect(() => {
+    refetch();
+  }, [currentPosition]);
   const icon = new Icon({
     iconUrl: VtbPointMap,
     iconSize: [70, 70],
@@ -25,7 +28,7 @@ export const AllBanks = () => {
       //iconUrl: VtbPointMap,
       className: cls.marker,
       iconSize: L.point(33, 33, false),
-      html: `<span style={display:block}>${cluster.getChildCount()}</span>`,
+      html: `<span style={display: block} > ${cluster.getChildCount()}</span >`,
     });
   };
   return (
@@ -34,7 +37,7 @@ export const AllBanks = () => {
         {points?.map((point) => (
           <Marker
             icon={icon}
-            eventHandlers={{ click: () => showBankDetails(point.id) }}
+            eventHandlers={{ click: () => setCurrentBankId(point.id) }}
             key={point.id}
             position={{
               lat: point.latitude,

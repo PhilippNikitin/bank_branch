@@ -103,7 +103,7 @@ export function DropdownCombobox({
         >
           {isOpen &&
             items.map((item, index) => (
-              <ListItem
+              <ListItem key={index + item}
                 listStyleType={"none"}
                 cursor={"pointer"}
                 style={

@@ -54,7 +54,7 @@ export const useGetCorrectBank = ({
   const fetcher = async () =>
     (
       await baseApi.get(
-        `/best-banks/?latitude=${latitude}}&longitude=${longitude}&services=${serviceParam}`,
+        `/best-banks/?latitude=${latitude}&longitude=${longitude}&services=${serviceParam}`,
         {
           headers: {
             "Content-Type": "application/json",

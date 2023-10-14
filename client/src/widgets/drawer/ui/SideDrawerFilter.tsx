@@ -1,4 +1,5 @@
 import { useGetCorrectBank } from '@/entities/bank/api/bankApi';
+import { useUserStore } from '@/entities/user';
 import {
   Box,
   Button,
@@ -22,6 +23,7 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
   const [isWorkingTimeOn, setIsWorkingTimeOn] = useState(true);
   const [isAccessibilityOn, setIsAccessibilityOn] = useState(false);
   const [selectedServices, setSelectedServices] = useState([]);
+  const services: string[] = [''];
 
   // const { data: points, isLoading } = useGetAllBanks({
   //   raduis: 10,
@@ -64,11 +66,18 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
 
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const currentPosition = useUserStore(state => state.currentCoords);
+
+
   const { isLoading: isQueryLoading, data, error, refetch } = useGetCorrectBank({
-    latitude: 55.759073,
-    longitude: 37.717201,
-    service: ['credit'],
+    latitude: currentPosition.latitude,
+    longitude: currentPosition.longitude,
+    // service: [...selectedServices],
+    service: ['card'],
+
   });
+  console.log(data)
 
   const handleClick = () => {
     setIsLoading(true);
@@ -185,8 +194,8 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
             variant="base"
-            isActive={selectedServices.includes("loans")}
-            onClick={() => handleServiceSelection("loans")}
+            isActive={selectedServices.includes("loan")}
+            onClick={() => handleServiceSelection("loan")}
           >
             Кредиты
           </Button>
@@ -194,8 +203,8 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
             variant="base"
-            isActive={selectedServices.includes("cards")}
-            onClick={() => handleServiceSelection("cards")}
+            isActive={selectedServices.includes("card")}
+            onClick={() => handleServiceSelection("card")}
           >
             Карты
           </Button>
@@ -203,8 +212,8 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
             variant="base"
-            isActive={selectedServices.includes("ipoteka")}
-            onClick={() => handleServiceSelection("ipoteka")}
+            isActive={selectedServices.includes("mortgage")}
+            onClick={() => handleServiceSelection("mortgage")}
           >
             Ипотека
           </Button>
@@ -212,8 +221,8 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
             variant="base"
-            isActive={selectedServices.includes("autoloan")}
-            onClick={() => handleServiceSelection("autoloan")}
+            isActive={selectedServices.includes("auto_loan")}
+            onClick={() => handleServiceSelection("auto_loan")}
           >
             Автокредиты
           </Button>
@@ -230,8 +239,8 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
             variant="base"
-            isActive={selectedServices.includes("investments")}
-            onClick={() => handleServiceSelection("investments")}
+            isActive={selectedServices.includes("investment")}
+            onClick={() => handleServiceSelection("investment")}
           >
             Инвестиции
           </Button>
@@ -239,8 +248,8 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
             variant="base"
-            isActive={selectedServices.includes("online-services")}
-            onClick={() => handleServiceSelection("online-services")}
+            isActive={selectedServices.includes("online")}
+            onClick={() => handleServiceSelection("online")}
           >
             Онлайн-сервисы{" "}
           </Button>
