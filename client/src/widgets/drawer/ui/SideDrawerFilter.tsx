@@ -1,3 +1,4 @@
+import { useGetCorrectBank } from '@/entities/bank/api/bankApi';
 import {
   Box,
   Button,
@@ -17,21 +18,30 @@ import { useState } from "react";
 
 export const SideDrawerFilter = ({ toggleFilter }) => {
   const theme = useTheme();
-  const [selectedClient, setSelectedClient] = useState("");
-  const [isWorkingTimeOn, setIsWorkingTimeOn] = useState(false);
+  const [selectedClient, setSelectedClient] = useState('');
+  const [isWorkingTimeOn, setIsWorkingTimeOn] = useState(true);
   const [isAccessibilityOn, setIsAccessibilityOn] = useState(false);
   const [selectedServices, setSelectedServices] = useState([]);
 
+  // const { data: points, isLoading } = useGetAllBanks({
+  //   raduis: 10,
+  //   latitude: 55.759073,
+  //   longitude: 37.717201,
+  // });
+
   const handleClientSelection = (client) => {
     setSelectedClient(client);
+    console.log(client)
   };
 
   const handleWorkingTimeToggle = () => {
     setIsWorkingTimeOn(!isWorkingTimeOn);
+    console.log(isWorkingTimeOn);
   };
 
   const handleAccessibilityToggle = () => {
     setIsAccessibilityOn(!isAccessibilityOn);
+    console.log(isAccessibilityOn);
   };
 
   const handleServiceSelection = (service) => {
@@ -45,11 +55,31 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
     }
 
     setSelectedServices(updatedServices);
+    console.log(updatedServices)
   };
 
   const handleMoreServicesClick = () => {
     // Handle "More Services" button click
   };
+
+
+  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading: isQueryLoading, data, error, refetch } = useGetCorrectBank({
+    latitude: 55.759073,
+    longitude: 37.717201,
+    service: ['credit'],
+  });
+
+  const handleClick = () => {
+    setIsLoading(true);
+
+    // Simulating an asynchronous operation
+    setTimeout(() => {
+      setIsLoading(false);
+      refetch(); // Trigger the query manually
+    }, 2000);
+  };
+
 
   return (
     <VStack align="stretch" spacing={3}>
@@ -224,12 +254,7 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
         </Link>
       </FormControl>
 
-      <Button
-        variant={"secondary"}
-        onClick={handleMoreServicesClick}
-        bgColor={theme.colors.blue.vtb_primary}
-        mt={4}
-      >
+      <Button isLoading={isLoading || isQueryLoading} onClick={handleClick} variant={"secondary"} bgColor={theme.colors.blue.vtb_primary} mt={4} >
         Применить
       </Button>
       <Link

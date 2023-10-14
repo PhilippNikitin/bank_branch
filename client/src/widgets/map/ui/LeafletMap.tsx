@@ -25,6 +25,7 @@ export const LeafletMap = () => {
       center={[55.582026, 37.3855235]}
       zoom={13}
       zoomControl={false}
+    // bounds={}
     >
       <TileLayer
         referrerPolicy={false}
@@ -33,7 +34,7 @@ export const LeafletMap = () => {
       <RoutingMachine
         waypoints={
           (L.latLng(userCoords.latitude, userCoords.longitude),
-          L.latLng(55.59, 37.39))
+            L.latLng(55.59, 37.39))
         }
         ref={rMachine}
       />

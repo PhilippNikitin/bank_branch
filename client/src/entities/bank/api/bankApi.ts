@@ -1,44 +1,59 @@
-import { useQuery } from "react-query"
-import { baseApi } from "@/shared/api/baseApi"
-import { ReqBankDetails, ReqAllBanksDto, ResBankDetails, ResAllBankDto, ResGetCorrectBank, ReqGetCorrectBank } from "./types"
+import { useQuery } from "react-query";
+import { baseApi } from "@/shared/api/baseApi";
+import {
+    ReqBankDetails,
+    ReqAllBanksDto,
+    ResBankDetails,
+    ResAllBankDto,
+} from "./types";
 
-export const useGetAllBanks = ({ latitude, longitude, raduis }: ReqAllBanksDto) => {
-
-
-    const fetcher = async () => (await baseApi.get<ResAllBankDto>(`/get-all-banks/?latitude=${latitude}&longitude=${longitude}&radius=${raduis}`, {
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })).data
+export const useGetAllBanks = ({
+    latitude,
+    longitude,
+    raduis,
+}: ReqAllBanksDto) => {
+    const fetcher = async () =>
+        (
+            await baseApi.get<ResAllBankDto>(
+                `/get-all-banks/?latitude=${latitude}&longitude=${longitude}&radius=${raduis}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+        ).data;
     const queryResult = useQuery({
         queryFn: fetcher,
-        queryKey: ['banks'],
-        enabled: true
-    })
-    return queryResult
-}
+        queryKey: ["banks"],
+        enabled: true,
+    });
+    return queryResult;
+};
 export const useGetBankDetailsById = (id: ReqBankDetails) => {
-    const fetcher = async () => (await baseApi.get<ResBankDetails>(`/get-bank/?format=json&id=${id}`, {
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })).data
+    const fetcher = async () =>
+        (
+            await baseApi.get<ResBankDetails>(`/get-bank/?format=json&id=${id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })).data
     const queryResult = useQuery({
         queryKey: ['bankDetail'],
         queryFn: fetcher,
     })
     return queryResult
 }
-export const useGetCorrectBank = ({ latitude, longitude, service }: ResGetCorrectBank) => {
-    const serviceParam = service.join(',')
-    const fetcher = async () => (await baseApi.get<ReqGetCorrectBank>(`/best-banks/?latitude=${latitude}&longitude=${longitude}&services=${serviceParam}`, {
+export const useGetCorrectBank = () => {
+    const fetcher = async () => (await baseApi.get('/get-bank/  ', {
         headers: {
             'Content-Type': 'application/json',
         }
-    })).data
+      )
+    ).data;
     const queryResult = useQuery({
-        queryKey: ['CorrectBank'],
+        queryKey: ["CorrectBank"],
         queryFn: fetcher,
-    })
-    return queryResult
-}
+    });
+    return queryResult;
+};
