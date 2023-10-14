@@ -2,7 +2,7 @@ import { Clusterer, Placemark } from "@pbe/react-yandex-maps";
 import { Icon, divIcon, point } from "leaflet";
 import L from "leaflet";
 import { MarkerCluster } from "leaflet";
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useGetAllBanks, useGetBankDetailsById } from "@/entities/bank";
@@ -28,16 +28,7 @@ export const AllBanks = () => {
       html: `<span style={display:block}>${cluster.getChildCount()}</span>`,
     });
   };
-  const [bankId, setBankId] = useState(0);
-  const { data, refetch, isLoading, isSuccess } = useGetBankDetailsById(bankId);
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  useEffect(() => {});
-  const showBankDetails = (bankId: number) => {
-    setBankId();
-    console.log(data);
-  };
+
   return (
     <>
       <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
