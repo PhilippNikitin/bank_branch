@@ -218,6 +218,7 @@ class BestBankView(APIView):  # для работы нужен сериализ�
             else:
                 workload = "unknown"
 
+
             return workload
 
 
@@ -231,10 +232,8 @@ class BestBankView(APIView):  # для работы нужен сериализ�
         if user_banks:
             for bank in user_banks:
                 # находим длину пешеходного и автомобильного маршрутов
-                walking_length = find_walking_length(float(start_lat), float(start_lon), float(bank.latitude), float(bank.longitude))  # находим длину пешеходного маршрута для данного банка
-                driving_length = find_driving_length(float(start_lat), float(start_lon), float(bank.latitude), float(bank.longitude))  # находим длину автомобильного маршрута для данного банка
-
-                # находим приблизительное время, которое уйдет на пешеходный и автомобильный маршрут
+                walking_length = find_walking_length(float(start_lat), float(start_lon), float(bank.latitude), float(bank.longitude)) # находим длину пешеходного маршрута для данного банка
+                driving_length = find_driving_length(float(start_lat), float(start_lon), float(bank.latitude), float(bank.longitude))  # находим длину автомобильного маршрута для данного банка# находим приблизительное время, которое уйдет на пешеходный и автомобильный маршрут
                 walking_time = (walking_length / 5) * 60  # средняя скорость принята за 5 км/ч, время в минутах
                 driving_time = (driving_length / 50) * 60  # средняя скорость автомобиля принята за 50 км/ч, время в минутах
 
@@ -260,17 +259,20 @@ class BestBankView(APIView):  # для работы нужен сериализ�
 
         min_walking_time = min(on_foot.values())  # минимальное время, за которое можно добраться до лучшего банка пешком
         min_driving_time = min(on_car.values())  # минимальное время, за которое можно добраться до лучшего банка на машине
+        best_on_foot_bank_id = min(on_foot, key=on_foot.get)
+        best_on_car_bank_id = min(on_car, key=on_car.get)
+        min_key = min(on_foot, key=on_foot.get)
 
-        best_on_foot_bank_id = 0
-        best_on_car_bank_id = 0
-
-        for k, v in on_foot.items():
-            if v == min_walking_time:
-                best_on_foot_bank_id = k  # находим id банка, до которого удобнее всего добраться пешком
-
-        for k, v in on_car.items():
-            if v == min_driving_time:
-                best_on_car_bank_id = k
+        # Выводим найденный ключ и его значение
+        print("Ключ с минимальным значением:", min_key)
+        print("Минимальное значение:", on_foot[min_key])
+        # for k, v in on_foot.items():
+        #     if v == min_walking_time:
+        #         best_on_foot_bank_id = k  # находим id банка, до которого удобнее всего добраться пешком
+        #
+        # for k, v in on_car.items():
+        #     if v == min_driving_time:
+        #         best_on_car_bank_id = k
 
         best_on_foot_bank = Bank.objects.filter(id=best_on_foot_bank_id)
         best_on_foot_bank_serializer = BankSerializer(best_on_foot_bank[0])
