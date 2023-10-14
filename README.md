@@ -118,7 +118,7 @@ npm run dev на vite
 
 ## Работа с данными
 
-Взаимодействие с данными осуществляется с помощью [Zustand + React-Query]. По возможности необходимо нормализовать сущности с помощью [EntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter).
+Взаимодействие с данными осуществляется с помощью [Zustand + React-Query].
 
 Запросы на сервер выполняются с помощью [Axios].
----
+
