@@ -1,7 +1,5 @@
 import { BankDetails } from "../types/types"
-export type ResAllBankDto = AllBankDto[]
-export type ResBankDetails = BankDetails
-export type ReqBankDetails = Id
+
 type Id = number
 // type CoordType = {
 //     latitude: number,
