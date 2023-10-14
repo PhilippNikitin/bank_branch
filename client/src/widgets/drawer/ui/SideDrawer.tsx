@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import { SideDrawerBankCard } from './SideDrawerBankCard';
 import { SideDrawerFilter } from "./SideDrawerFilter";
+import SideDrawerSearch from "./SideDrawerSearch";
 
 
 export const SideDrawer = () => {
@@ -32,10 +33,10 @@ export const SideDrawer = () => {
         "&::-webkit-scrollbar-track": {
           background: "transparent",
         },
-        "&::-webkit-scrollbar-thumb": {
-          background: "gray.300",
-          borderRadius: "3px",
-        },
+        // "&::-webkit-scrollbar-thumb": {
+        //   background: "gray.300",
+        //   borderRadius: "3px",
+        // },
       }}
     >
       <Flippy flipOnClick={false} ref={refBank}>

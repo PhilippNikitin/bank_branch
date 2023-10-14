@@ -29,7 +29,7 @@ export const LeafletMap = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <RoutingMachine
-        waypoints={(L.latLng(55.58, 37.38), L.latLng(55.  59, 37.39))}
+        waypoints={(L.latLng(55.58, 37.38), L.latLng(55.59, 37.39))}
         ref={rMachine}
       />
       <AllBanks />
