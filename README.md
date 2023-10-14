@@ -2,7 +2,7 @@
 
 ```console
 npm install - установка зависимостей
-npm run dev на vite
+npm run dev на vite - сборка
 ```
 
 ---
