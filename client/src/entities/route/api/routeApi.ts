@@ -19,11 +19,3 @@ export const useGetRoutes = (props: ResGetRoutes) => {
     })
     return queryResult
 }
-// export const useGetBankDetailsById = () => {
-//     const fetcher = async () => 
-//     const queryResult = useQuery({
-//         queryKey: ['bankDetail'],
-//         queryFn: fetcher,
-//     })
-//         return queryResult
-//     }

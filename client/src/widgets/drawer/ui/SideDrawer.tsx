@@ -1,9 +1,9 @@
 import { Card } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import Flippy, { FrontSide, BackSide } from 'react-flippy';
-import { SideDrawerBankCard } from './SideDrawerBankCard';
+import Flippy, { FrontSide, BackSide } from "react-flippy";
+import { SideDrawerBankCard } from "./SideDrawerBankCard";
 import { SideDrawerFilter } from "./SideDrawerFilter";
-
+import SideDrawerSearch from "./SideDrawerSearch";
 
 export const SideDrawer = () => {
   const refBank = useRef();
@@ -40,12 +40,22 @@ export const SideDrawer = () => {
     >
       <Flippy flipOnClick={false} ref={refBank}>
         <FrontSide>
-          <Flippy flipDirection="horizontal" isFlipped={true} flipOnClick={false} ref={ref}
-          ><FrontSide>
-              < SideDrawerSearch toggleMap={() => refBank.current.toggle()} value={value} onInput={(e) => setValue(e.target.value)} toggleFilter={() => ref.current.toggle()} />
+          <Flippy
+            flipDirection="horizontal"
+            isFlipped={true}
+            flipOnClick={false}
+            ref={ref}
+          >
+            <FrontSide>
+              <SideDrawerSearch
+                toggleMap={() => refBank.current.toggle()}
+                value={value}
+                onInput={(e) => setValue(e.target.value)}
+                toggleFilter={() => ref.current.toggle()}
+              />
             </FrontSide>
             <BackSide>
-              < SideDrawerFilter toggleFilter={() => ref.current.toggle()} />
+              <SideDrawerFilter toggleFilter={() => ref.current.toggle()} />
             </BackSide>
           </Flippy>
         </FrontSide>

@@ -4,18 +4,19 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import { AllBanks } from "@/features/bank/ui/AllBanks";
 import { LocationMarker } from "@/features/locationMarker";
 import { RoutingMachine } from "@/features/mapRoute/addRoute";
+import { useUserStore } from "@/entities/user";
 import cls from "./Map.module.css";
 export const LeafletMap = () => {
   const rMachine = useRef<L.Routing.Control>(null);
-
+  const userCoords = useUserStore((state) => state.currentCoords);
   useEffect(() => {
     if (rMachine.current) {
       rMachine.current.setWaypoints([
-        L.latLng(55.58, 37.38),
+        L.latLng(userCoords.latitude, userCoords.longitude),
         L.latLng(55.59, 37.39),
       ]);
     }
-  }, [rMachine]);
+  }, [rMachine, userCoords.latitude, userCoords.longitude]);
 
   return (
     <MapContainer
@@ -24,14 +25,16 @@ export const LeafletMap = () => {
       center={[55.582026, 37.3855235]}
       zoom={13}
       zoomControl={false}
-      bounds={}
     >
       <TileLayer
         referrerPolicy={false}
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <RoutingMachine
-        waypoints={(L.latLng(55.58, 37.38), L.latLng(55.59, 37.39))}
+        waypoints={
+          (L.latLng(userCoords.latitude, userCoords.longitude),
+          L.latLng(55.59, 37.39))
+        }
         ref={rMachine}
       />
       <AllBanks />

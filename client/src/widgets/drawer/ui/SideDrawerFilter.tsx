@@ -12,13 +12,12 @@ import {
   Text,
   VStack,
   useTheme,
-} from '@chakra-ui/react';
-import { useState } from 'react';
+} from "@chakra-ui/react";
+import { useState } from "react";
 
 export const SideDrawerFilter = ({ toggleFilter }) => {
-
   const theme = useTheme();
-  const [selectedClient, setSelectedClient] = useState('');
+  const [selectedClient, setSelectedClient] = useState("");
   const [isWorkingTimeOn, setIsWorkingTimeOn] = useState(false);
   const [isAccessibilityOn, setIsAccessibilityOn] = useState(false);
   const [selectedServices, setSelectedServices] = useState([]);
@@ -54,46 +53,54 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
 
   return (
     <VStack align="stretch" spacing={3}>
-      <Flex justifyContent={'space-between'}>
-        <Heading size={'sm'}>Фильтры отделений</Heading>
-        <Button bgColor={"transparent"} color={"grey"} _hover={{ bgColor: "none" }} onClick={toggleFilter} cursor={'pointer'}>x</Button>
+      <Flex justifyContent={"space-between"}>
+        <Heading size={"sm"}>Фильтры отделений</Heading>
+        <Button
+          bgColor={"transparent"}
+          color={"grey"}
+          _hover={{ bgColor: "none" }}
+          onClick={toggleFilter}
+          cursor={"pointer"}
+        >
+          x
+        </Button>
       </Flex>
-      <FormControl >
+      <FormControl>
         <FormLabel>Клиенты</FormLabel>
         <Flex wrap={"wrap"} gap={"8px"}>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant={'base'}
-            isActive={selectedClient === 'persons'}
-            onClick={() => handleClientSelection('persons')}
+            variant={"base"}
+            isActive={selectedClient === "persons"}
+            onClick={() => handleClientSelection("persons")}
           >
             Физические лица
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant={'base'}
-            isActive={selectedClient === 'privelege'}
-            onClick={() => handleClientSelection('privelege')}
+            variant={"base"}
+            isActive={selectedClient === "privelege"}
+            onClick={() => handleClientSelection("privelege")}
           >
             Привилегия
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant={'base'}
-            isActive={selectedClient === 'prime'}
-            onClick={() => handleClientSelection('prime')}
+            variant={"base"}
+            isActive={selectedClient === "prime"}
+            onClick={() => handleClientSelection("prime")}
           >
             Прайм
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant={'base'}
-            isActive={selectedClient === 'organizations'}
-            onClick={() => handleClientSelection('organizations')}
+            variant={"base"}
+            isActive={selectedClient === "organizations"}
+            onClick={() => handleClientSelection("organizations")}
           >
             Юридические лица
           </Button>
@@ -119,7 +126,12 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
 
       <Divider />
 
-      <FormControl display="flex" flexDir={"column"} alignItems="flex-start" gap={"16px"}>
+      <FormControl
+        display="flex"
+        flexDir={"column"}
+        alignItems="flex-start"
+        gap={"16px"}
+      >
         <FormLabel htmlFor="accessibility" mb={0}>
           Доступная среда
         </FormLabel>
@@ -142,75 +154,90 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant='base'
-            isActive={selectedServices.includes('loans')}
-            onClick={() => handleServiceSelection('loans')}
+            variant="base"
+            isActive={selectedServices.includes("loans")}
+            onClick={() => handleServiceSelection("loans")}
           >
             Кредиты
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant='base'
-            isActive={selectedServices.includes('cards')}
-            onClick={() => handleServiceSelection('cards')}
+            variant="base"
+            isActive={selectedServices.includes("cards")}
+            onClick={() => handleServiceSelection("cards")}
           >
             Карты
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant='base'
-            isActive={selectedServices.includes('ipoteka')}
-            onClick={() => handleServiceSelection('ipoteka')}
+            variant="base"
+            isActive={selectedServices.includes("ipoteka")}
+            onClick={() => handleServiceSelection("ipoteka")}
           >
             Ипотека
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant='base'
-            isActive={selectedServices.includes('autoloan')}
-            onClick={() => handleServiceSelection('autoloan')}
+            variant="base"
+            isActive={selectedServices.includes("autoloan")}
+            onClick={() => handleServiceSelection("autoloan")}
           >
             Автокредиты
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant='base'
-            isActive={selectedServices.includes('deposit')}
-            onClick={() => handleServiceSelection('deposit')}
+            variant="base"
+            isActive={selectedServices.includes("deposit")}
+            onClick={() => handleServiceSelection("deposit")}
           >
             Вклады и счета
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant='base'
-            isActive={selectedServices.includes('investments')}
-            onClick={() => handleServiceSelection('investments')}
+            variant="base"
+            isActive={selectedServices.includes("investments")}
+            onClick={() => handleServiceSelection("investments")}
           >
             Инвестиции
           </Button>
           <Button
             borderColor={theme.colors.blue.vtb_primary}
             type="button"
-            variant='base'
-            isActive={selectedServices.includes('online-services')}
-            onClick={() => handleServiceSelection('online-services')}
+            variant="base"
+            isActive={selectedServices.includes("online-services")}
+            onClick={() => handleServiceSelection("online-services")}
           >
-            Онлайн-сервисы          </Button>
+            Онлайн-сервисы{" "}
+          </Button>
         </Flex>
-        <Link color={theme.colors.blue.vtb_primary} onClick={handleMoreServicesClick} mt={4} >
+        <Link
+          color={theme.colors.blue.vtb_primary}
+          onClick={handleMoreServicesClick}
+          mt={4}
+        >
           Больше услуг
         </Link>
       </FormControl>
 
-      <Button variant={"secondary"} onClick={handleMoreServicesClick} bgColor={theme.colors.blue.vtb_primary} mt={4} >
+      <Button
+        variant={"secondary"}
+        onClick={handleMoreServicesClick}
+        bgColor={theme.colors.blue.vtb_primary}
+        mt={4}
+      >
         Применить
       </Button>
-      <Link textAlign={'center'} color={theme.colors.blue.vtb_primary} onClick={handleMoreServicesClick} mt={4} >
+      <Link
+        textAlign={"center"}
+        color={theme.colors.blue.vtb_primary}
+        onClick={handleMoreServicesClick}
+        mt={4}
+      >
         Сбросить все фильтры
       </Link>
     </VStack>
