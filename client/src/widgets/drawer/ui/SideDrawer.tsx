@@ -1,14 +1,19 @@
 import { Card } from "@chakra-ui/react";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
 import { useState, useRef } from "react";
 import Flippy, { FrontSide, BackSide } from "react-flippy";
 import { SideDrawerBankCard } from "./SideDrawerBankCard";
 import { SideDrawerFilter } from "./SideDrawerFilter";
 import SideDrawerSearch from "./SideDrawerSearch";
-
 export const SideDrawer = () => {
   const refBank = useRef();
   const ref = useRef();
   const [value, setValue] = useState("");
+  const provider = new OpenStreetMapProvider();
+
+  const result = 
+  
+  
 
   return (
     <Card

@@ -1,6 +1,6 @@
 import { useQuery } from "react-query"
 import { baseApi } from "@/shared/api/baseApi"
-import { ReqBankDetails, ReqAllBanksDto, ResBankDetails, ResAllBankDto } from "./types"
+import { ReqBankDetails, ReqAllBanksDto, ResBankDetails, ResAllBankDto, ResGetCorrectBank, ReqGetCorrectBank } from "./types"
 
 export const useGetAllBanks = ({ latitude, longitude, raduis }: ReqAllBanksDto) => {
 
@@ -29,8 +29,9 @@ export const useGetBankDetailsById = (id: ReqBankDetails) => {
     })
     return queryResult
 }
-export const useGetCorrectBank = () => {
-    const fetcher = async () => (await baseApi.get('/get-bank/  ', {
+export const useGetCorrectBank = ({ latitude, longitude, service }: ResGetCorrectBank) => {
+    const serviceParam = service.join(',')
+    const fetcher = async () => (await baseApi.get<ReqGetCorrectBank>(`/best-banks/?latitude=${latitude}&longitude=${longitude}&services=${serviceParam}`, {
         headers: {
             'Content-Type': 'application/json',
         }
