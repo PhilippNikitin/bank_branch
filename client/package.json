@@ -16,6 +16,7 @@
     "@fontsource/m-plus-1p": "^5.0.14",
     "@pbe/react-yandex-maps": "^1.2.5",
     "axios": "^1.5.1",
+    "downshift": "^8.2.2",
     "framer-motion": "^10.16.4",
     "immer": "^10.0.3",
     "react": "^18.2.0",

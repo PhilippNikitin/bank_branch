@@ -15,7 +15,8 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
-export const SideDrawerFilter = () => {
+export const SideDrawerFilter = ({ toggleFilter }) => {
+
   const theme = useTheme();
   const [selectedClient, setSelectedClient] = useState('');
   const [isWorkingTimeOn, setIsWorkingTimeOn] = useState(false);
@@ -53,7 +54,10 @@ export const SideDrawerFilter = () => {
 
   return (
     <VStack align="stretch" spacing={3}>
-      <Heading size={'sm'}>Фильтры отделений</Heading>
+      <Flex justifyContent={'space-between'}>
+        <Heading size={'sm'}>Фильтры отделений</Heading>
+        <Button onClick={toggleFilter} cursor={'pointer'}>x</Button>
+      </Flex>
       <FormControl >
         <FormLabel>Клиенты</FormLabel>
         <Flex wrap={"wrap"} gap={"8px"}>

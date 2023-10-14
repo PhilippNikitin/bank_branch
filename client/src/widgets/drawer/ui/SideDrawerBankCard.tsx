@@ -49,7 +49,7 @@ const mockBank = [{
   }
 }]
 
-export const SideDrawerBankCard = () => {
+export const SideDrawerBankCard = ({ toggleMap }) => {
   const [selectedClient, setSelectedClient] = useState('');
   const [isWorkingTimeOn, setIsWorkingTimeOn] = useState(false);
   const [isAccessibilityOn, setIsAccessibilityOn] = useState(false);
@@ -91,9 +91,12 @@ export const SideDrawerBankCard = () => {
 
   return (
     <VStack spacing={4} align="stretch">
-      <Heading size={'sm'} as="h2">
-        {mockBank[0].name}
-      </Heading>
+      <Box>
+        <Heading size={'sm'} as="h2">
+          {mockBank[0].name}
+        </Heading>
+        <Button onClick={toggleMap} cursor={'pointer'}>x</Button>
+      </Box>
 
       <Text>{mockBank[0].address}</Text>
       <Text >Possible Metro Station</Text>
