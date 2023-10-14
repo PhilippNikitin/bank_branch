@@ -1,64 +1,54 @@
 import {
-  Box,
-  Button,
   Card,
   CardBody,
   CardHeader,
   Heading,
-  Input,
   Stack,
+  Flex,
   StackDivider,
-  Text,
+  useTheme
 } from "@chakra-ui/react";
 import { useState } from "react";
+import SideDrawerSearch from "./SideDrawerSearch";
+import { SideDrawerFilter } from "./SideDrawerFilter";
+import { SideDrawerBankCard } from './SideDrawerBankCard';
+
 export const SideDrawer = () => {
-  const [value, setValue] = useState(0);
+
+  const [value, setValue] = useState("");
+
   return (
     <Card
       position={"absolute"}
-      mt={"10"}
-      width={"auto"}
+      mt={"5"}
+      maxWidth={"352px"}
       height={"85vh"}
       zIndex={"modal"}
       borderRadius={"16px"}
       padding={"24 16"}
+      color={"#fff"}
       backgroundColor={"#1A1E23"}
       ml={"8"}
+      overflow={"auto"}
+      sx={{
+        scrollbarWidth: "thin",
+        scrollbarColor: "gray.300 transparent",
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "gray.300",
+          borderRadius: "3px",
+        },
+      }}
     >
-      <CardHeader>
-        <Heading size="md">Client Report</Heading>
-      </CardHeader>
-
-      <CardBody>
-        <Stack divider={<StackDivider />} spacing="4">
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Summary
-            </Heading>
-            <Input
-              color={"white"}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            />
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Overview
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              Check out the overview of your clients.
-            </Text>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Analysis
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              See a detailed analysis of all your business clients.
-            </Text>
-            <Button>Click</Button>
-          </Box>
-        </Stack>
+      <CardBody height={"100%"}>
+        {/* <SideDrawerSearch value={value} onInput={(e) => setValue(e.target.value)} /> */}
+        <SideDrawerFilter />
+        {/* <SideDrawerBankCard /> */}
       </CardBody>
     </Card>
   );
