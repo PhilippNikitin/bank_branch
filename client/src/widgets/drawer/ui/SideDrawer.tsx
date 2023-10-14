@@ -25,7 +25,7 @@ export const SideDrawer = () => {
     <Card
       position={"absolute"}
       mt={"5"}
-      maxWidth={"352px"}
+      maxWidth={"382px"}
       height={"85vh"}
       zIndex={"modal"}
       borderRadius={"16px"}
@@ -64,11 +64,6 @@ export const SideDrawer = () => {
           <SideDrawerBankCard toggleMap={() => refBank.current.toggle()} />
         </BackSide>
       </Flippy>
-
-      {/* {selectedFilter ?
-          < SideDrawerFilter toggleFilter={toggleSelectedFilter} /> :
-          < SideDrawerSearch value={value} onInput={(e) => setValue(e.target.value)} toggleFilter={toggleSelectedFilter} />}
-        <SideDrawerBankCard /> */}
     </Card>
   );
 };

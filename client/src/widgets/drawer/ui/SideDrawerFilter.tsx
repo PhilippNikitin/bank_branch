@@ -56,7 +56,7 @@ export const SideDrawerFilter = ({ toggleFilter }) => {
     <VStack align="stretch" spacing={3}>
       <Flex justifyContent={'space-between'}>
         <Heading size={'sm'}>Фильтры отделений</Heading>
-        <Button onClick={toggleFilter} cursor={'pointer'}>x</Button>
+        <Button bgColor={"transparent"} color={"grey"} _hover={{ bgColor: "none" }} onClick={toggleFilter} cursor={'pointer'}>x</Button>
       </Flex>
       <FormControl >
         <FormLabel>Клиенты</FormLabel>
