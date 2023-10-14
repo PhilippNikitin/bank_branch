@@ -10,9 +10,23 @@ import {
   StackDivider,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { useEffect, useState } from "react";
 export const SideDrawer = () => {
-  const [value, setValue] = useState(0);
+  const [search, setSeacrh] = useState("");
+  const [city, setCity] = useState<[]>();
+  const provider = new OpenStreetMapProvider({
+    params: {
+      countrycodes: "ru",
+      addressdetails: 3,
+    },
+  });
+
+  useEffect(() => {
+    const results = provider.search({ query: search });
+    results.then((data) => setCity(data));
+    console.log(city);
+  }, [search]);
   return (
     <Card
       position={"absolute"}
@@ -37,9 +51,10 @@ export const SideDrawer = () => {
             </Heading>
             <Input
               color={"white"}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
+              value={search}
+              onChange={(e) => setSeacrh(e.target.value)}
             />
+            <Text color={"white"}>{city?.map((data) => data?.label)}</Text>
           </Box>
           <Box>
             <Heading size="xs" textTransform="uppercase">

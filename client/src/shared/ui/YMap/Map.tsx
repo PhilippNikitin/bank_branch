@@ -9,7 +9,7 @@ import { YMapsApi } from "@pbe/react-yandex-maps/typings/util/typing";
 import { useRef, useCallback, useState, useEffect } from "react";
 
 import { AllBanksWithYMap } from "@/features/bank";
-import { addRoute } from "@/features/mapRoute/addRoute/lib/addRoute";
+import { addRoute } from "@/features/mapRoute/addRoute/ui/RoutingMachine";
 import { useGetAllBanks } from "@/entities/bank";
 import { useUserStore } from "@/entities/user";
 import cls from "./Map.module.css";

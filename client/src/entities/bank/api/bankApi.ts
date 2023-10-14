@@ -29,3 +29,15 @@ export const useGetBankDetailsById = (id: ReqBankDetails) => {
     })
     return queryResult
 }
+export const useGetCorrectBank = () => {
+    const fetcher = async () => (await baseApi.get('/get-bank/', {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })).data
+    const queryResult = useQuery({
+        queryKey: ['CorrectBank'],
+        queryFn: fetcher,
+    })
+    return queryResult
+}
