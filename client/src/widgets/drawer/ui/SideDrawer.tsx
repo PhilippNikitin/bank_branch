@@ -11,10 +11,6 @@ export const SideDrawer = () => {
   const [value, setValue] = useState("");
   const provider = new OpenStreetMapProvider();
 
-  const result = 
-  
-  
-
   return (
     <Card
       position={"absolute"}
